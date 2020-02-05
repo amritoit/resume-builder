@@ -1,0 +1,3 @@
+# https://www.playframework.com/documentation/2.8.x/Tutorials#Database
+play-java-jpa-example: https://github.com/playframework/play-samples/tree/2.8.x/play-java-jpa-example/
+REST API Example : https://github.com/playframework/play-samples/tree/2.8.x/play-java-rest-api-example/
