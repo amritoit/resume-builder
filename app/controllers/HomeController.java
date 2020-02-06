@@ -1,8 +1,22 @@
 package controllers;
 
+import models.Person;
+import models.PersonRepository;
+import play.data.FormFactory;
+import play.libs.concurrent.HttpExecutionContext;
+import play.mvc.Controller;
+import play.mvc.Http;
+import play.mvc.Result;
+
+import models.PersonRepository;
+import play.data.FormFactory;
+import play.libs.concurrent.HttpExecutionContext;
 import play.mvc.*;
 
+import javax.inject.Inject;
 import java.util.ArrayList;
+import java.util.concurrent.CompletionStage;
+import java.util.stream.Collectors;
 
 import static play.libs.Json.toJson;
 
@@ -11,6 +25,15 @@ import static play.libs.Json.toJson;
  * to the application's home page.
  */
 public class HomeController extends Controller {
+
+    private final PersonRepository personRepository;
+    private final HttpExecutionContext ec;
+
+    @Inject
+    public HomeController(PersonRepository personRepository, HttpExecutionContext ec) {
+        this.personRepository = personRepository;
+        this.ec = ec;
+    }
 
     /**
      * An action that renders an HTML page with a welcome message.
@@ -21,8 +44,11 @@ public class HomeController extends Controller {
     public Result index() {
         return ok(views.html.index.render());
     }
-    public Result getPerson() {
-        return ok(toJson("{'name': 'Amritendu'}"));
+    public CompletionStage<Result> getPerson() {
+        return personRepository
+                .list()
+                .thenApplyAsync(personStream -> ok(toJson(personStream.collect(Collectors.toList()))), ec.current());
+//        return ok(toJson("{'name': 'Amritendu'}"));
     }
 
 }
