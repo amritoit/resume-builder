@@ -9,23 +9,25 @@ lazy val root = (project in file(".")).enablePlugins(PlayJava)
 
 resolvers += "scalaz-bintray" at "https://dl.bintray.com/scalaz/releases"
 
-
 scalaVersion := "2.12.10"
 
-libraryDependencies += "com.ticketfly" %% "play-liquibase" % "2.2"
-libraryDependencies ++= Seq("mysql" % "mysql-connector-java" % "8.0.14")
-libraryDependencies += "com.typesafe.sbt" % "sbt-interface" % "0.13.15"
-libraryDependencies += "com.typesafe.play" %% "play" % "2.8.1"
-libraryDependencies += "com.typesafe.play" %% "play-java-jpa" % "2.8.1"
-libraryDependencies += ws
+libraryDependencies += "com.googlecode.json-simple" % "json-simple" % "1.1.1"
 libraryDependencies ++= Seq(
+  "com.ticketfly" %% "play-liquibase" % "2.2",
+  "mysql" % "mysql-connector-java" % "8.0.14",
+  "com.typesafe.sbt" % "sbt-interface" % "0.13.15",
+  "com.typesafe.play" %% "play" % "2.8.1",
+  "com.typesafe.play" %% "play-java-jpa" % "2.8.1",
+  "org.json" % "json" % "20190722",
+  "org.hibernate" % "hibernate-core" % "5.4.9.Final",
+  "javax.persistence" % "javax.persistence-api" % "2.2",
+  ws,
   guice,
   javaJdbc,
   javaJpa,
-  "org.hibernate" % "hibernate-core" % "5.4.9.Final",
-  "javax.persistence" % "javax.persistence-api" % "2.2",
+  evolutions,
+  jdbc
 )
-libraryDependencies ++= Seq(evolutions, jdbc)
 Test / testOptions += Tests.Argument(TestFrameworks.JUnit, "-a", "-v")
 scalacOptions ++= List("-encoding", "utf8", "-deprecation", "-feature", "-unchecked")
 javacOptions ++= List("-Xlint:unchecked", "-Xlint:deprecation", "-Werror")

@@ -5,9 +5,9 @@ insert into persons (id, name,first_name,last_name,resume_name,profession,about_
 values (1, 'Amritendu Mondal','Amritendu','Mondal','my_master_resume', 'Software Engineer','Experienced in Software Development and Design with over 8 years of experience. Excellent reputation for resolving problems, improving customer satisfaction, and driving overall operational improvements. Enthusiastic engineer eager to contribute to team success through hard work, attention to detail and excellent organizational skills. Clear understanding of Software designing and development. Motivated to learn, grow and excel.',
 1, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP());
 
-insert into contacts (id, person_id,mobile,email,city,state,zipcode,address,social_id,created_at,updated_at) values (1, 1,2355345345,'sample@gmail.com','chennai','TamilNadu','234432','Perungudi, OMR Street', 1,CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP());
-insert into social_infos (id, person_id, contact_id, name, value, created_at, updated_at) values (1,1,1,'twitter','amritoit',CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP());
-insert into social_infos (id, person_id, contact_id, name, value, created_at, updated_at) values (2,1,1,'linkedin','https://www.linkedin.com/in/amritoit',CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP());
+insert into contacts (id, person_id,mobile,email,city,state,zipcode,address,created_at,updated_at) values (1, 1,2355345345,'sample@gmail.com','chennai','TamilNadu','234432','Perungudi, OMR Street',CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP());
+insert into social_links (id, person_id, contact_id, name, value, created_at, updated_at) values (1,1,1,'twitter','amritoit',CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP());
+insert into social_links (id, person_id, contact_id, name, value, created_at, updated_at) values (2,1,1,'linkedin','https://www.linkedin.com/in/amritoit',CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP());
 
 insert into skills (id, person_id, name, proficiency, created_at, updated_at) values (1, 1, 'Java', 4, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP());
 insert into skills (id, person_id, name, proficiency, created_at, updated_at) values (2, 1, 'Elasticsearch', 4, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP());
@@ -67,7 +67,7 @@ insert into additional_info (id, person_id, name, value, year, created_at, updat
 
 delete from persons;
 delete from contacts;
-delete from social_infos;
+delete from social_links;
 delete from skills;
 delete from work_infos;
 delete from work_role_desc;

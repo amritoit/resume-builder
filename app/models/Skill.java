@@ -7,22 +7,22 @@ import javax.persistence.*;
 import java.util.Date;
 
 @Entity
-@Table(name="persons")
-public class Person {
-
+@Table(name="skills")
+public class Skill {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", columnDefinition="BIGINT(20) NOT NULL")
     private Long id;
 
-    @Column(name = "first_name", nullable = false)
-    private String firstName;
+    @Column(name = "person_id", columnDefinition="BIGINT(20) NOT NULL")
+    private Long personId;
 
-    @Column(name = "last_name", nullable = false)
-    private String lastName;
 
-    @Column(name = "name", nullable = false)
+    @Column(name = "name", columnDefinition="VARCHAR(50) NOT NULL")
     private String name;
+
+    @Column(name = "proficiency", columnDefinition="INT NOT NULL")
+    private String proficiency;
 
     @CreationTimestamp
     @Temporal(TemporalType.TIMESTAMP)
@@ -42,20 +42,12 @@ public class Person {
         this.id = id;
     }
 
-    public String getFirstName() {
-        return firstName;
+    public Long getPersonId() {
+        return personId;
     }
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
+    public void setPersonId(Long personId) {
+        this.personId = personId;
     }
 
     public String getName() {
@@ -64,6 +56,14 @@ public class Person {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getProficiency() {
+        return proficiency;
+    }
+
+    public void setProficiency(String proficiency) {
+        this.proficiency = proficiency;
     }
 
     public Date getCreatedAt() {

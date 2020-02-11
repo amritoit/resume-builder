@@ -14,13 +14,13 @@ import static java.util.concurrent.CompletableFuture.supplyAsync;
 /**
  * Provide JPA operations running inside of a thread pool sized to the connection pool
  */
-public class JPAPersonRepository implements PersonRepository {
+public class PersonRepositoryImpl implements PersonRepository {
 
     private final JPAApi jpaApi;
     private final DatabaseExecutionContext executionContext;
 
     @Inject
-    public JPAPersonRepository(JPAApi jpaApi, DatabaseExecutionContext executionContext) {
+    public PersonRepositoryImpl(JPAApi jpaApi, DatabaseExecutionContext executionContext) {
         this.jpaApi = jpaApi;
         this.executionContext = executionContext;
     }
@@ -31,8 +31,8 @@ public class JPAPersonRepository implements PersonRepository {
     }
 
     @Override
-    public CompletionStage<Stream<Person>> list() {
-        return supplyAsync(() -> wrap(em -> list(em)), executionContext);
+    public CompletionStage<Person> getPerson(Long personId) {
+        return supplyAsync(() -> wrap(em -> getPerson(em, personId)), executionContext);
     }
 
     private <T> T wrap(Function<EntityManager, T> function) {
@@ -44,8 +44,8 @@ public class JPAPersonRepository implements PersonRepository {
         return person;
     }
 
-    private Stream<Person> list(EntityManager em) {
-        List<Person> persons = em.createQuery("select p from Person p", Person.class).getResultList();
-        return persons.stream();
+    private Person getPerson(EntityManager em, Long personId) {
+        Person person = em.createQuery("select p from Person p where p.id="+personId, Person.class).getSingleResult();
+        return person;
     }
 }

@@ -1,5 +1,6 @@
 package controllers;
 
+import models.ContactRepository;
 import models.Person;
 import models.PersonRepository;
 import play.data.FormFactory;
@@ -26,12 +27,10 @@ import static play.libs.Json.toJson;
  */
 public class HomeController extends Controller {
 
-    private final PersonRepository personRepository;
     private final HttpExecutionContext ec;
 
     @Inject
-    public HomeController(PersonRepository personRepository, HttpExecutionContext ec) {
-        this.personRepository = personRepository;
+    public HomeController(HttpExecutionContext ec) {
         this.ec = ec;
     }
 
@@ -44,11 +43,4 @@ public class HomeController extends Controller {
     public Result index() {
         return ok(views.html.index.render());
     }
-    public CompletionStage<Result> getPerson() {
-        return personRepository
-                .list()
-                .thenApplyAsync(personStream -> ok(toJson(personStream.collect(Collectors.toList()))), ec.current());
-//        return ok(toJson("{'name': 'Amritendu'}"));
-    }
-
 }

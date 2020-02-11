@@ -9,5 +9,10 @@
                          columnName="proficiency"
                          defaultValueNumeric="0"
                          tableName="skills"/>
+
+        <addDefaultValue columnDataType="int"
+                         columnName="currently_studying_here"
+                         defaultValueNumeric="0"
+                         tableName="education"/>
     </changeSet>
 </databaseChangeLog>

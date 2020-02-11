@@ -31,9 +31,6 @@
             <column name="address" type="varchar(255)">
                 <constraints nullable="true"/>
             </column>
-            <column name="social_id" type="bigint">
-                <constraints nullable="true"/>
-            </column>
             <column name="created_at" type="datetime">
                 <constraints nullable="false"/>
             </column>

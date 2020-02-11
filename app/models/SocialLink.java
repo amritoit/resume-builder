@@ -7,22 +7,25 @@ import javax.persistence.*;
 import java.util.Date;
 
 @Entity
-@Table(name="persons")
-public class Person {
+@Table(name="social_links")
+public class SocialLink {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", columnDefinition="BIGINT(20) NOT NULL")
     private Long id;
 
-    @Column(name = "first_name", nullable = false)
-    private String firstName;
+    @Column(name = "person_id", columnDefinition="BIGINT(20) NOT NULL")
+    private Long personId;
 
-    @Column(name = "last_name", nullable = false)
-    private String lastName;
+    @Column(name = "contact_id", columnDefinition="BIGINT(20) NOT NULL")
+    private Long contactId;
 
-    @Column(name = "name", nullable = false)
+    @Column(name = "name", columnDefinition="VARCHAR(50) NOT NULL")
     private String name;
+
+    @Column(name = "value", columnDefinition="VARCHAR(255) NOT NULL")
+    private String value;
 
     @CreationTimestamp
     @Temporal(TemporalType.TIMESTAMP)
@@ -42,20 +45,20 @@ public class Person {
         this.id = id;
     }
 
-    public String getFirstName() {
-        return firstName;
+    public Long getPersonId() {
+        return personId;
     }
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
+    public void setPersonId(Long personId) {
+        this.personId = personId;
     }
 
-    public String getLastName() {
-        return lastName;
+    public Long getContactId() {
+        return contactId;
     }
 
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
+    public void setContactId(Long contactId) {
+        this.contactId = contactId;
     }
 
     public String getName() {
@@ -64,6 +67,14 @@ public class Person {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getValue() {
+        return value;
+    }
+
+    public void setValue(String value) {
+        this.value = value;
     }
 
     public Date getCreatedAt() {

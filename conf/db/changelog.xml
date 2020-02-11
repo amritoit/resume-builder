@@ -7,7 +7,7 @@
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
     <include file="v1_create_table_persons.xml" relativeToChangelogFile="true"/>
     <include file="v2_create_table_contacts.xml" relativeToChangelogFile="true"/>
-    <include file="v3_create_table_social_infos.xml" relativeToChangelogFile="true"/>
+    <include file="v3_create_table_social_links.xml" relativeToChangelogFile="true"/>
     <include file="v4_create_table_work_infos.xml" relativeToChangelogFile="true"/>
     <include file="v5_create_table_skills.xml" relativeToChangelogFile="true"/>
     <include file="v6_create_table_education.xml" relativeToChangelogFile="true"/>
