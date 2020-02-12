@@ -1,9 +1,9 @@
-package models;
+package models.repository;
 
 import com.google.inject.ImplementedBy;
+import models.Person;
 
 import java.util.concurrent.CompletionStage;
-import java.util.stream.Stream;
 
 @ImplementedBy(PersonRepositoryImpl.class)
 public interface PersonRepository {

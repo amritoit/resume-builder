@@ -1,25 +1,10 @@
 package controllers;
 
-import models.ContactRepository;
-import models.Person;
-import models.PersonRepository;
-import play.data.FormFactory;
 import play.libs.concurrent.HttpExecutionContext;
 import play.mvc.Controller;
-import play.mvc.Http;
 import play.mvc.Result;
 
-import models.PersonRepository;
-import play.data.FormFactory;
-import play.libs.concurrent.HttpExecutionContext;
-import play.mvc.*;
-
 import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.concurrent.CompletionStage;
-import java.util.stream.Collectors;
-
-import static play.libs.Json.toJson;
 
 /**
  * This controller contains an action to handle HTTP requests

@@ -1,7 +1,8 @@
 package controllers;
 
-import dao.ResumeDao;
+import dao.ResumeDTO;
 import models.*;
+import models.repository.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import play.libs.concurrent.HttpExecutionContext;
@@ -23,33 +24,41 @@ public class ResumeController extends Controller {
     private final ContactRepository contactRepository;
     private final SkillRepository skillRepository;
     private final EducationRepository educationRepository;
+    private final WorkRepository workRepository;
+    private final AdditionalInformationRepository additionalInformationRepository;
 
 
     private final HttpExecutionContext ec;
 
     @Inject
     public ResumeController(PersonRepository personRepository, ContactRepository contactRepository,
-                            SkillRepository skillRepository, EducationRepository educationRepository, HttpExecutionContext ec) {
+                            SkillRepository skillRepository, EducationRepository educationRepository,
+                            WorkRepository workRepository, AdditionalInformationRepository additionalInformationRepository,
+                            HttpExecutionContext ec) {
         this.personRepository = personRepository;
         this.contactRepository = contactRepository;
         this.skillRepository = skillRepository;
         this.educationRepository = educationRepository;
+        this.workRepository = workRepository;
+        this.additionalInformationRepository = additionalInformationRepository;
         this.ec = ec;
     }
 
     public CompletionStage<Result>  getPerson(Long personId) {
         CompletionStage<Person> person = personRepository.getPerson(personId);
         CompletionStage<Contact> contact = contactRepository.getContact(personId);
-        CompletionStage<Stream<SocialLink>> streamSocialLink = contact.thenCompose(c-> contactRepository.getSocialLink(c.getId(), personId));
         CompletionStage<Stream<Skill>> streamSkills = skillRepository.getSkills(personId);
         CompletionStage<Stream<Education>> streamEducation = educationRepository.getEducation(personId);
+        CompletionStage<Stream<Work>> streamWork = workRepository.getWorks(personId);
+        CompletionStage<Stream<AdditionalInformation>> streamAdditionalInfo = additionalInformationRepository.getAdditionalInformations(personId);
 
-        ResumeDao resumeDao = new ResumeDao();
-        return person.thenAccept(resumeDao::setBasic).thenRunAsync(() -> contact.thenAccept(resumeDao::setContact)).
-                thenRunAsync(()->streamSocialLink.thenAccept(s -> resumeDao.setSocial(s.collect(Collectors.toList())))).
-                thenRunAsync(()->streamSkills.thenAccept(s->resumeDao.setSkill(s.collect(Collectors.toList())))).
-                thenRunAsync(()->streamEducation.thenAccept(s->resumeDao.setEducation(s.collect(Collectors.toList())))).
-                thenApplyAsync(s-> ok(toJson(resumeDao)));
+        ResumeDTO resumeDTO = new ResumeDTO();
+        return person.thenAccept(resumeDTO::setBasic).thenRunAsync(() -> contact.thenAccept(resumeDTO::setContact)).
+                thenRunAsync(()->streamSkills.thenAccept(s-> resumeDTO.setSkills(s.collect(Collectors.toList())))).
+                thenRunAsync(()->streamEducation.thenAccept(s-> resumeDTO.setEducation(s.collect(Collectors.toList())))).
+                thenRunAsync(()->streamWork.thenAccept(s-> resumeDTO.setWorks(s.collect(Collectors.toList())))).
+                thenRunAsync(()->streamAdditionalInfo.thenAccept(s-> resumeDTO.setAdditionalInfo(s.collect(Collectors.toList())))).
+                thenApplyAsync(s-> ok(toJson(resumeDTO)));
     }
 
 //    public CompletionStage<Result> getContact() {

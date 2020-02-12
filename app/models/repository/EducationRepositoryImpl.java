@@ -1,5 +1,6 @@
-package models;
+package models.repository;
 
+import models.Education;
 import play.db.jpa.JPAApi;
 
 import javax.inject.Inject;

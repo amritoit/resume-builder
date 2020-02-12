@@ -1,5 +1,6 @@
 package models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -15,9 +16,11 @@ public class SocialLink {
     @Column(name = "id", columnDefinition="BIGINT(20) NOT NULL")
     private Long id;
 
+    @JsonIgnore
     @Column(name = "person_id", columnDefinition="BIGINT(20) NOT NULL")
     private Long personId;
 
+    @JsonIgnore
     @Column(name = "contact_id", columnDefinition="BIGINT(20) NOT NULL")
     private Long contactId;
 
@@ -27,11 +30,13 @@ public class SocialLink {
     @Column(name = "value", columnDefinition="VARCHAR(255) NOT NULL")
     private String value;
 
+    @JsonIgnore
     @CreationTimestamp
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "created_at", nullable = false)
     private Date createdAt;
 
+    @JsonIgnore
     @UpdateTimestamp
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "updated_at", nullable = false)

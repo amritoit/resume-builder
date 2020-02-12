@@ -1,6 +1,7 @@
-package models;
+package models.repository;
 
 import com.google.inject.ImplementedBy;
+import models.Skill;
 
 import java.util.concurrent.CompletionStage;
 import java.util.stream.Stream;

@@ -1,13 +1,12 @@
-package models;
+package models.repository;
 
+import models.Contact;
 import play.db.jpa.JPAApi;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
-import java.util.List;
 import java.util.concurrent.CompletionStage;
 import java.util.function.Function;
-import java.util.stream.Stream;
 
 import static java.util.concurrent.CompletableFuture.supplyAsync;
 
@@ -33,11 +32,6 @@ public class ContactRepositoryImpl implements ContactRepository{
         return supplyAsync(() -> wrap(em -> getContact(em, personId)), executionContext);
     }
 
-    @Override
-    public CompletionStage<Stream<SocialLink>> getSocialLink(Long contactId, Long personId) {
-        return supplyAsync(() -> wrap(em -> getSocialLinks(em, contactId, personId)), executionContext);
-    }
-
     private <T> T wrap(Function<EntityManager, T> function) {
         return jpaApi.withTransaction(function);
     }
@@ -51,11 +45,4 @@ public class ContactRepositoryImpl implements ContactRepository{
         Contact contact = em.createQuery("select c from Contact c where c.personId=" + personId, Contact.class).getSingleResult();
         return contact;
     }
-
-    private Stream<SocialLink> getSocialLinks(EntityManager em, Long contactId, Long personId) {
-        List<SocialLink> socialLinks = em.createQuery("select s from  SocialLink s where s.contactId="+contactId+" and s.personId="+personId+" order by s.updatedAt",
-                SocialLink.class).getResultList();
-        return socialLinks.stream();
-    }
-
 }

@@ -1,5 +1,7 @@
 package models;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -16,6 +18,7 @@ public class Education {
     @Column(name = "id", columnDefinition="BIGINT(20) NOT NULL")
     private Long id;
 
+    @JsonIgnore
     @Column(name = "person_id", columnDefinition="BIGINT(20) NOT NULL")
     private Long personId;
 
@@ -31,9 +34,11 @@ public class Education {
     @Column(name = "field_of_study", columnDefinition="VARCHAR(50) NOT NULL")
     private String fieldOfStudy;
 
+    @JsonFormat(timezone = "UTC", shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     @Column(name = "start_date", nullable = false)
     private Date startDate;
 
+    @JsonFormat(timezone = "UTC", shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     @Column(name = "end_date")
     private Date endDate;
 
@@ -43,11 +48,13 @@ public class Education {
     @Column(name = "description", columnDefinition="LONGTEXT")
     private String description;
 
+    @JsonIgnore
     @CreationTimestamp
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "created_at", nullable = false)
     private Date createdAt;
 
+    @JsonIgnore
     @UpdateTimestamp
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "updated_at", nullable = false)

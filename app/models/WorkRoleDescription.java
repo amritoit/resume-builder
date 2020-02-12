@@ -8,8 +8,8 @@ import javax.persistence.*;
 import java.util.Date;
 
 @Entity
-@Table(name="skills")
-public class Skill {
+@Table(name="work_role_desc")
+public class WorkRoleDescription {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", columnDefinition="BIGINT(20) NOT NULL")
@@ -19,12 +19,11 @@ public class Skill {
     @Column(name = "person_id", columnDefinition="BIGINT(20) NOT NULL")
     private Long personId;
 
+    @Column(name = "work_info_id", columnDefinition="BIGINT(20) NOT NULL")
+    private Long workInfoId;
 
-    @Column(name = "name", columnDefinition="VARCHAR(50) NOT NULL")
-    private String name;
-
-    @Column(name = "proficiency", columnDefinition="INT NOT NULL")
-    private Integer proficiency = 0;
+    @Column(name = "description", columnDefinition="LONGTEXT")
+    private String description;
 
     @JsonIgnore
     @CreationTimestamp
@@ -54,20 +53,20 @@ public class Skill {
         this.personId = personId;
     }
 
-    public String getName() {
-        return name;
+    public Long getWorkInfoId() {
+        return workInfoId;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setWorkInfoId(Long workInfoId) {
+        this.workInfoId = workInfoId;
     }
 
-    public Integer getProficiency() {
-        return proficiency;
+    public String getDescription() {
+        return description;
     }
 
-    public void setProficiency(Integer proficiency) {
-        this.proficiency = proficiency;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public Date getCreatedAt() {

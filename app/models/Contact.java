@@ -1,10 +1,13 @@
 package models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name="contacts")
@@ -15,6 +18,7 @@ public class Contact {
     @Column(name = "id", columnDefinition="BIGINT(20) NOT NULL")
     private Long id;
 
+    @JsonIgnore
     @Column(name = "person_id", columnDefinition="BIGINT(20) NOT NULL")
     private Long personId;
 
@@ -36,15 +40,21 @@ public class Contact {
     @Column(name = "address", columnDefinition="VARCHAR(255)")
     private String address;
 
+    @JsonIgnore
     @CreationTimestamp
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "created_at", nullable = false)
     private Date createdAt;
 
+    @JsonIgnore
     @UpdateTimestamp
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "updated_at", nullable = false)
     private Date updatedAt;
+
+    @OneToMany(fetch = FetchType.EAGER)
+    @JoinColumn(name="contact_id", referencedColumnName="id")
+    private List<SocialLink> socialLinks;
 
     public Long getId() {
         return id;
