@@ -19,6 +19,7 @@ public class WorkRoleDescription {
     @Column(name = "person_id", columnDefinition="BIGINT(20) NOT NULL")
     private Long personId;
 
+    @JsonIgnore
     @Column(name = "work_info_id", columnDefinition="BIGINT(20) NOT NULL")
     private Long workInfoId;
 

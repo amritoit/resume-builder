@@ -59,7 +59,7 @@ public class Work {
 
     @OneToMany(fetch = FetchType.EAGER)
     @JoinColumn(name="work_info_id", referencedColumnName="id")
-    private List<WorkRoleDescription> workRoleDescriptionList;
+    private List<WorkRoleDescription> roleDescriptions;
 
     public Long getId() {
         return id;
@@ -149,11 +149,11 @@ public class Work {
         this.updatedAt = updatedAt;
     }
 
-    public List<WorkRoleDescription> getWorkRoleDescriptionList() {
-        return workRoleDescriptionList;
+    public List<WorkRoleDescription> getRoleDescriptions() {
+        return roleDescriptions;
     }
 
-    public void setWorkRoleDescriptionList(List<WorkRoleDescription> workRoleDescriptionList) {
-        this.workRoleDescriptionList = workRoleDescriptionList;
+    public void setRoleDescriptions(List<WorkRoleDescription> workRoleDescriptionList) {
+        this.roleDescriptions = workRoleDescriptionList;
     }
 }
