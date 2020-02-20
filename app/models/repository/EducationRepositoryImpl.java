@@ -29,6 +29,11 @@ public class EducationRepositoryImpl implements EducationRepository {
     }
 
     @Override
+    public CompletionStage<Stream<Education>> mergeEducation(List<Education> education) {
+        return supplyAsync(() -> wrap(em -> mergeEducation(em, education)), executionContext);
+    }
+
+    @Override
     public CompletionStage<Stream<Education>> getEducation(Long personId) {
         return supplyAsync(() -> wrap(em -> getEducation(em, personId)), executionContext);
     }
@@ -39,6 +44,11 @@ public class EducationRepositoryImpl implements EducationRepository {
 
     private Stream<Education> insertEducation(EntityManager em, List<Education> education) {
         education.forEach(em::persist);
+        return education.stream();
+    }
+
+    private Stream<Education> mergeEducation(EntityManager em, List<Education> education) {
+        education.forEach(em::merge);
         return education.stream();
     }
 

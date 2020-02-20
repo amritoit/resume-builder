@@ -9,7 +9,6 @@ import java.util.concurrent.CompletionStage;
 import java.util.function.Function;
 
 import static java.util.concurrent.CompletableFuture.supplyAsync;
-import static play.libs.Json.toJson;
 
 public class ContactRepositoryImpl implements ContactRepository{
 
@@ -22,6 +21,11 @@ public class ContactRepositoryImpl implements ContactRepository{
         this.executionContext = executionContext;
     }
 
+
+    @Override
+    public CompletionStage<Contact> mergeContact(Contact contact) {
+        return supplyAsync(() -> wrap(em -> mergeContact(em, contact)), executionContext);
+    }
 
     @Override
     public CompletionStage<Contact> addContact(Contact contact){
@@ -39,6 +43,11 @@ public class ContactRepositoryImpl implements ContactRepository{
 
     private Contact insertContact(EntityManager em, Contact contact) {
         em.persist(contact);
+        return contact;
+    }
+
+    private Contact mergeContact(EntityManager em, Contact contact) {
+        em.merge(contact);
         return contact;
     }
 

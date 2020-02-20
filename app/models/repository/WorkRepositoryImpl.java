@@ -30,6 +30,12 @@ public class WorkRepositoryImpl implements WorkRepository{
     }
 
     @Override
+    public CompletionStage<Stream<Workinfo>> mergeWork(List<Workinfo> workinfos) {
+        return supplyAsync(() -> wrap(em -> mergeWork(em, workinfos)), executionContext);
+
+    }
+
+    @Override
     public CompletionStage<Stream<Workinfo>> getWorks(Long personId) {
         return supplyAsync(() -> wrap(em -> getWorks(em, personId)), executionContext);
     }
@@ -40,6 +46,11 @@ public class WorkRepositoryImpl implements WorkRepository{
 
     private Stream<Workinfo> insertWork(EntityManager em, List<Workinfo> workinfos) {
         workinfos.forEach(em::persist);
+        return workinfos.stream();
+    }
+
+    private Stream<Workinfo> mergeWork(EntityManager em, List<Workinfo> workinfos) {
+        workinfos.forEach(em::merge);
         return workinfos.stream();
     }
 

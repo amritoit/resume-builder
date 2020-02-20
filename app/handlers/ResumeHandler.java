@@ -69,7 +69,6 @@ public class ResumeHandler {
         });
     }
 
-    //TODO: contact_id in person table not populated
     public CompletionStage<ResumeDTO> createResume(ResumeDTO resumeDTO) {
 
         CompletionStage<Person> personCompletionStage = personRepository.add(resumeDTO.getBasic());
@@ -105,5 +104,46 @@ public class ResumeHandler {
                 thenCombine(workCompletionStage.thenApply(s -> s), (w, r) -> resumeDTO).
                 thenCombineAsync(addInfoCompletionStage.thenApply(s -> s), (c, s) -> resumeDTO).
                 thenApply(r->personRepository.merge(resumeDTO.getBasic())).thenApply(s->resumeDTO);
+    }
+
+    public CompletionStage<ResumeDTO> updateResume(ResumeDTO resumeDTO) throws Exception {
+
+        if (resumeDTO.getBasic().getId() == null) {
+            logger.error("Person does not exists in the system.");
+            throw new Exception("Person does not exists in the system.");
+        } else {
+            CompletionStage<Person> personCompletionStage = personRepository.merge(resumeDTO.getBasic());
+            CompletionStage<ResumeDTO> resumeDTOCompletionStage = personCompletionStage.thenApply(person -> {
+                resumeDTO.getContact().setPersonId(person.getId());
+                resumeDTO.getContact().getSocialLinks().forEach(s -> s.setPersonId(person.getId()));
+                resumeDTO.getSkills().forEach(s -> s.setPersonId(person.getId()));
+                resumeDTO.getEducation().forEach(e -> e.setPersonId(person.getId()));
+                resumeDTO.getWorkinfos().forEach(w -> w.setPersonId(person.getId()));
+                resumeDTO.getAdditionalInfo().forEach(a -> a.setPersonId(person.getId()));
+                return resumeDTO;
+            });
+            CompletionStage<Contact> contactCompletionStage = resumeDTOCompletionStage.thenComposeAsync(lResumeDTO -> {
+                lResumeDTO.getContact().getSocialLinks().forEach(s -> s.setContact(lResumeDTO.getContact()));
+                return contactRepository.mergeContact(lResumeDTO.getContact());
+            });
+            CompletionStage<Stream<Skill>> skillCompletionStage = resumeDTOCompletionStage.thenComposeAsync(lResumeDTO ->
+                    skillRepository.mergeSkills(lResumeDTO.getSkills()));
+            CompletionStage<Stream<Education>> eduCompletionStage = resumeDTOCompletionStage.thenComposeAsync(lResumeDTO ->
+                    educationRepository.mergeEducation(lResumeDTO.getEducation()));
+            CompletionStage<Stream<Workinfo>> workCompletionStage = resumeDTOCompletionStage.thenComposeAsync(lResumeDTO -> {
+                lResumeDTO.getWorkinfos().forEach(w-> w.getWorkRoleDescriptions().forEach(d->d.setPersonId(w.getPersonId())));
+                lResumeDTO.getWorkinfos().forEach(w-> w.getWorkRoleDescriptions().forEach(d->d.setWorkinfo(w)));
+                return workRepository.mergeWork(lResumeDTO.getWorkinfos());
+            });
+            CompletionStage<Stream<AdditionalInformation>> addInfoCompletionStage = resumeDTOCompletionStage.thenComposeAsync(lResumeDTO ->
+                    additionalInformationRepository.mergeAdditionalInformation(lResumeDTO.getAdditionalInfo()));
+            return contactCompletionStage.thenCombine(skillCompletionStage.thenApply(s -> s), (contact, skills) -> {
+                resumeDTO.getBasic().setContactId(contact.getId());
+                return resumeDTO;
+            }).thenCombine(eduCompletionStage.thenApply(s -> s), (r, e) -> resumeDTO).
+                    thenCombine(workCompletionStage.thenApply(s -> s), (w, r) -> resumeDTO).
+                    thenCombineAsync(addInfoCompletionStage.thenApply(s -> s), (c, s) -> resumeDTO).
+                    thenApply(r->personRepository.merge(resumeDTO.getBasic())).thenApply(s->resumeDTO);
+        }
     }
 }

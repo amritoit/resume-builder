@@ -31,6 +31,11 @@ public class SkillRepositoryImpl implements SkillRepository {
     }
 
     @Override
+    public CompletionStage<Stream<Skill>> mergeSkills(List<Skill> skills) {
+        return supplyAsync(() -> wrap(em -> mergeSkills(em, skills)), executionContext);
+    }
+
+    @Override
     public CompletionStage<Stream<Skill>> getSkills(Long personId){
         return supplyAsync(() -> wrap(em -> getSkills(em, personId)), executionContext);
     }
@@ -41,6 +46,11 @@ public class SkillRepositoryImpl implements SkillRepository {
 
     private Stream<Skill> insertSkills(EntityManager em, List<Skill> skills) {
         skills.forEach(em::persist);
+        return skills.stream();
+    }
+
+    private Stream<Skill> mergeSkills(EntityManager em, List<Skill> skills) {
+        skills.forEach(em::merge);
         return skills.stream();
     }
 

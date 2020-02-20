@@ -32,6 +32,13 @@ public class AdditionalInformationRepositoryImpl implements AdditionalInformatio
     }
 
     @Override
+    public CompletionStage<Stream<AdditionalInformation>> mergeAdditionalInformation(List<AdditionalInformation> additionalInformation) {
+        return supplyAsync(() -> wrap(em -> mergeAdditionalInformation(em, additionalInformation)), executionContext);
+
+    }
+
+
+    @Override
     public CompletionStage<Stream<AdditionalInformation>> getAdditionalInformations(Long personId) {
         return supplyAsync(() -> wrap(em -> getAdditionalInformations(em, personId)), executionContext);
 
@@ -43,6 +50,11 @@ public class AdditionalInformationRepositoryImpl implements AdditionalInformatio
 
     private Stream<AdditionalInformation> insertAdditionalInformation(EntityManager em, List<AdditionalInformation> additionalInformation) {
         additionalInformation.forEach(em::persist);
+        return additionalInformation.stream();
+    }
+
+    private Stream<AdditionalInformation> mergeAdditionalInformation(EntityManager em, List<AdditionalInformation> additionalInformation) {
+        additionalInformation.forEach(em::merge);
         return additionalInformation.stream();
     }
 

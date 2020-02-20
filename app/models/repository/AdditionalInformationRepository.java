@@ -9,6 +9,7 @@ import java.util.stream.Stream;
 
 @ImplementedBy(AdditionalInformationRepositoryImpl.class)
 public interface AdditionalInformationRepository {
+    CompletionStage<Stream<AdditionalInformation>> mergeAdditionalInformation(List<AdditionalInformation> additionalInformation);
     CompletionStage<Stream<AdditionalInformation>> addAdditionalInformation(List<AdditionalInformation> additionalInformation);
     CompletionStage<Stream<AdditionalInformation>> getAdditionalInformations(Long personId);
 }

@@ -11,3 +11,6 @@ GET     /person/:id                 controllers.ResumeController.getPerson(id: L
 
 +nocsrf
 POST    /person                     controllers.ResumeController.addPerson(request:Request)
+
++nocsrf
+PUT     /person                     controllers.ResumeController.updatePerson(request:Request)

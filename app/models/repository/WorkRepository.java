@@ -11,4 +11,5 @@ import java.util.stream.Stream;
 public interface WorkRepository {
     CompletionStage<Stream<Workinfo>> addWork(List<Workinfo> workInfo);
     CompletionStage<Stream<Workinfo>> getWorks(Long personId);
+    CompletionStage<Stream<Workinfo>> mergeWork(List<Workinfo> workinfos);
 }

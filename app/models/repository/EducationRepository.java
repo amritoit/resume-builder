@@ -10,5 +10,6 @@ import java.util.stream.Stream;
 @ImplementedBy(EducationRepositoryImpl.class)
 public interface EducationRepository {
     CompletionStage<Stream<Education>> addEducation(List<Education> education);
+    CompletionStage<Stream<Education>> mergeEducation(List<Education> education);
     CompletionStage<Stream<Education>> getEducation(Long personId);
 }

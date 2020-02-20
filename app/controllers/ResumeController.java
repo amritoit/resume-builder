@@ -49,4 +49,17 @@ public class ResumeController extends Controller {
         CompletionStage<ResumeDTO> resumeDTOCompletionStage = handler.createResume(resumeDTO);
         return resumeDTOCompletionStage.thenApplyAsync(s->ok(toJson("\"status\":\"success\"")));
     }
+
+    public CompletionStage<Result>  updatePerson(Http.Request request) {
+        try {
+            JsonNode json = request.body().asJson();
+            logger.warn("request received to create resume:" + json);
+            final ResumeDTO resumeDTO = Json.fromJson(json.get("result"), ResumeDTO.class);
+            logger.warn("restored DTO object:" + resumeDTO.getBasic());
+            CompletionStage<ResumeDTO> resumeDTOCompletionStage = handler.updateResume(resumeDTO);
+            return resumeDTOCompletionStage.thenApplyAsync(s -> ok(toJson("\"status\":\"success\"")));
+        }catch (Exception ex) {
+            return null;
+        }
+    }
 }
