@@ -26,7 +26,7 @@ public class AdditionalInformationRepositoryImpl implements AdditionalInformatio
 
 
     @Override
-    public CompletionStage<AdditionalInformation> addAdditionalInformation(AdditionalInformation additionalInformation) {
+    public CompletionStage<Stream<AdditionalInformation>> addAdditionalInformation(List<AdditionalInformation> additionalInformation) {
         return supplyAsync(() -> wrap(em -> insertAdditionalInformation(em, additionalInformation)), executionContext);
 
     }
@@ -41,9 +41,9 @@ public class AdditionalInformationRepositoryImpl implements AdditionalInformatio
         return jpaApi.withTransaction(function);
     }
 
-    private AdditionalInformation insertAdditionalInformation(EntityManager em, AdditionalInformation additionalInformation) {
-        em.persist(additionalInformation);
-        return additionalInformation;
+    private Stream<AdditionalInformation> insertAdditionalInformation(EntityManager em, List<AdditionalInformation> additionalInformation) {
+        additionalInformation.forEach(em::persist);
+        return additionalInformation.stream();
     }
 
     private Stream<AdditionalInformation> getAdditionalInformations(EntityManager em, Long personId) {

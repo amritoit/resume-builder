@@ -1,9 +1,6 @@
 package dao;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import models.*;
-import org.json.JSONObject;
 
 import java.util.List;
 
@@ -14,7 +11,7 @@ public class ResumeDTO {
     private Contact contact;
     private List<Skill> skills;
     private List<Education> education;
-    private List<Work> works;
+    private List<Workinfo> workinfos;
     private List<AdditionalInformation> additionalInfo;
 
     public Person getBasic() {
@@ -37,9 +34,9 @@ public class ResumeDTO {
 
     public void setSkills(List<Skill> skills) { this.skills = skills; }
 
-    public List<Work> getWorks() { return works; }
+    public List<Workinfo> getWorkinfos() { return workinfos; }
 
-    public void setWorks(List<Work> works) { this.works = works; }
+    public void setWorkinfos(List<Workinfo> workinfos) { this.workinfos = workinfos; }
 
     public List<Education> getEducation() { return education; }
 

@@ -28,6 +28,7 @@ libraryDependencies ++= Seq(
   evolutions,
   jdbc
 )
+libraryDependencies += "javax" % "javaee-api" % "6.0" % "provided"
 Test / testOptions += Tests.Argument(TestFrameworks.JUnit, "-a", "-v")
 scalacOptions ++= List("-encoding", "utf8", "-deprecation", "-feature", "-unchecked")
 javacOptions ++= List("-Xlint:unchecked", "-Xlint:deprecation", "-Werror")

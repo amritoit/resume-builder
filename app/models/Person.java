@@ -36,7 +36,7 @@ public class Person {
     private String aboutMe;
 
     @JsonIgnore
-    @Column(name = "contact_id", nullable = false)
+    @Column(name = "contact_id")
     private Long contactId;
 
     @JsonFormat(timezone = "UTC", shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'hh:mm:ss")

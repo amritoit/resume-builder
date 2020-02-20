@@ -7,11 +7,11 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.util.Date;
-import java.util.List;
+import java.util.Set;
 
 @Entity
-@Table(name="work_infos")
-public class Work {
+@Table(name="workinfos")
+public class Workinfo {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -57,9 +57,9 @@ public class Work {
     @Column(name = "updated_at", nullable = false)
     private Date updatedAt;
 
-    @OneToMany(fetch = FetchType.EAGER)
-    @JoinColumn(name="work_info_id", referencedColumnName="id")
-    private List<WorkRoleDescription> roleDescriptions;
+    @OneToMany(fetch = FetchType.EAGER, cascade=CascadeType.ALL)
+    @JoinColumn(name="workinfo_id")
+    private Set<WorkRoleDescription> workRoleDescriptions;
 
     public Long getId() {
         return id;
@@ -149,11 +149,11 @@ public class Work {
         this.updatedAt = updatedAt;
     }
 
-    public List<WorkRoleDescription> getRoleDescriptions() {
-        return roleDescriptions;
+    public Set<WorkRoleDescription> getWorkRoleDescriptions() {
+        return workRoleDescriptions;
     }
 
-    public void setRoleDescriptions(List<WorkRoleDescription> workRoleDescriptionList) {
-        this.roleDescriptions = workRoleDescriptionList;
+    public void setWorkRoleDescriptions(Set<WorkRoleDescription> workRoleDescriptionList) {
+        this.workRoleDescriptions = workRoleDescriptionList;
     }
 }

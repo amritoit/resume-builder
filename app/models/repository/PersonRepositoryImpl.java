@@ -9,6 +9,7 @@ import java.util.concurrent.CompletionStage;
 import java.util.function.Function;
 
 import static java.util.concurrent.CompletableFuture.supplyAsync;
+import static play.libs.Json.toJson;
 
 /**
  * Provide JPA operations running inside of a thread pool sized to the connection pool
@@ -39,6 +40,7 @@ public class PersonRepositoryImpl implements PersonRepository {
     }
 
     private Person insert(EntityManager em, Person person) {
+        System.out.println("person:"+toJson(person));
         em.persist(person);
         return person;
     }

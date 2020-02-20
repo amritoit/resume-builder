@@ -24,7 +24,7 @@ public class EducationRepositoryImpl implements EducationRepository {
     }
 
     @Override
-    public CompletionStage<Education> addEducation(Education education) {
+    public CompletionStage<Stream<Education>> addEducation(List<Education> education) {
         return supplyAsync(() -> wrap(em -> insertEducation(em, education)), executionContext);
     }
 
@@ -37,11 +37,10 @@ public class EducationRepositoryImpl implements EducationRepository {
         return jpaApi.withTransaction(function);
     }
 
-    private Education insertEducation(EntityManager em, Education education) {
-        em.persist(education);
-        return education;
+    private Stream<Education> insertEducation(EntityManager em, List<Education> education) {
+        education.forEach(em::persist);
+        return education.stream();
     }
-
 
     private Stream<Education> getEducation(EntityManager em, Long personId) {
         List<Education> educations = em.createQuery("select e from  Education e where e.personId="+personId+" order by e.updatedAt",

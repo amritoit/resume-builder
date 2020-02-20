@@ -7,7 +7,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import javax.persistence.*;
 import java.util.Date;
 
-@Entity
+@Entity(name = "ForeignKeyAssoContactEntity")
 @Table(name="social_links")
 public class SocialLink {
 
@@ -19,10 +19,6 @@ public class SocialLink {
     @JsonIgnore
     @Column(name = "person_id", columnDefinition="BIGINT(20) NOT NULL")
     private Long personId;
-
-    @JsonIgnore
-    @Column(name = "contact_id", columnDefinition="BIGINT(20) NOT NULL")
-    private Long contactId;
 
     @Column(name = "name", columnDefinition="VARCHAR(50) NOT NULL")
     private String name;
@@ -42,6 +38,18 @@ public class SocialLink {
     @Column(name = "updated_at", nullable = false)
     private Date updatedAt;
 
+    @ManyToOne
+    @JsonIgnore
+    private Contact contact;
+
+    public Contact getContact() {
+        return contact;
+    }
+
+    public void setContact(Contact contact) {
+        this.contact = contact;
+    }
+
     public Long getId() {
         return id;
     }
@@ -56,14 +64,6 @@ public class SocialLink {
 
     public void setPersonId(Long personId) {
         this.personId = personId;
-    }
-
-    public Long getContactId() {
-        return contactId;
-    }
-
-    public void setContactId(Long contactId) {
-        this.contactId = contactId;
     }
 
     public String getName() {

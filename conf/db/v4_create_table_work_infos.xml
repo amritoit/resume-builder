@@ -5,8 +5,8 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.6.xsd">
     <changeSet id="4" author="amritendu">
-        <comment>Create table work information</comment>
-        <createTable tableName="work_infos">
+        <comment>Create table workInfo information</comment>
+        <createTable tableName="workinfos">
             <column name="id" type="bigint" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
             </column>

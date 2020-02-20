@@ -7,7 +7,9 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name="contacts")
@@ -18,7 +20,6 @@ public class Contact {
     @Column(name = "id", columnDefinition="BIGINT(20) NOT NULL")
     private Long id;
 
-    @JsonIgnore
     @Column(name = "person_id", columnDefinition="BIGINT(20) NOT NULL")
     private Long personId;
 
@@ -52,9 +53,9 @@ public class Contact {
     @Column(name = "updated_at", nullable = false)
     private Date updatedAt;
 
-    @OneToMany(fetch = FetchType.EAGER)
-    @JoinColumn(name="contact_id", referencedColumnName="id")
-    private List<SocialLink> socialLinks;
+    @OneToMany(fetch = FetchType.EAGER, cascade=CascadeType.ALL)
+    @JoinColumn(name="contact_id")
+    private Set<SocialLink> socialLinks;
 
     public Long getId() {
         return id;
@@ -134,5 +135,13 @@ public class Contact {
 
     public void setUpdatedAt(Date updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public Set<SocialLink> getSocialLinks() {
+        return socialLinks;
+    }
+
+    public void setSocialLinks(Set<SocialLink> socialLinks) {
+        this.socialLinks = socialLinks;
     }
 }

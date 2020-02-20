@@ -7,7 +7,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import javax.persistence.*;
 import java.util.Date;
 
-@Entity
+@Entity(name = "ForeignKeyAssoWorkEntity")
 @Table(name="work_role_desc")
 public class WorkRoleDescription {
     @Id
@@ -19,9 +19,13 @@ public class WorkRoleDescription {
     @Column(name = "person_id", columnDefinition="BIGINT(20) NOT NULL")
     private Long personId;
 
+//    @JsonIgnore
+//    @Column(name = "work_info_id", columnDefinition="BIGINT(20) NOT NULL")
+//    private Long workInfoId;
+
+    @ManyToOne
     @JsonIgnore
-    @Column(name = "work_info_id", columnDefinition="BIGINT(20) NOT NULL")
-    private Long workInfoId;
+    private Workinfo workinfo;
 
     @Column(name = "description", columnDefinition="LONGTEXT")
     private String description;
@@ -54,13 +58,20 @@ public class WorkRoleDescription {
         this.personId = personId;
     }
 
-    public Long getWorkInfoId() {
-        return workInfoId;
+    public Workinfo getWorkinfo() {
+        return workinfo;
     }
 
-    public void setWorkInfoId(Long workInfoId) {
-        this.workInfoId = workInfoId;
+    public void setWorkinfo(Workinfo workinfo) {
+        this.workinfo = workinfo;
     }
+//    public Long getWorkInfoId() {
+//        return workInfoId;
+//    }
+//
+//    public void setWorkInfoId(Long workInfoId) {
+//        this.workInfoId = workInfoId;
+//    }
 
     public String getDescription() {
         return description;

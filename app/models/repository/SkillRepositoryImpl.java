@@ -12,6 +12,7 @@ import java.util.stream.Stream;
 
 import static java.util.concurrent.CompletableFuture.supplyAsync;
 
+//TODO: move the query in constant file
 public class SkillRepositoryImpl implements SkillRepository {
 
     private final JPAApi jpaApi;
@@ -24,8 +25,8 @@ public class SkillRepositoryImpl implements SkillRepository {
     }
 
     @Override
-    public CompletionStage<Skill> addSkill(Skill Skill){
-        return supplyAsync(() -> wrap(em -> insertSkill(em, Skill)), executionContext);
+    public CompletionStage<Stream<Skill>> addSkill(List<Skill> skills){
+        return supplyAsync(() -> wrap(em -> insertSkills(em, skills)), executionContext);
 
     }
 
@@ -38,9 +39,9 @@ public class SkillRepositoryImpl implements SkillRepository {
         return jpaApi.withTransaction(function);
     }
 
-    private Skill insertSkill(EntityManager em, Skill skill) {
-        em.persist(skill);
-        return skill;
+    private Stream<Skill> insertSkills(EntityManager em, List<Skill> skills) {
+        skills.forEach(em::persist);
+        return skills.stream();
     }
 
     private Stream<Skill> getSkills(EntityManager em, Long personId) {

@@ -1,70 +1,52 @@
 package controllers;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import dao.ResumeDTO;
-import models.*;
-import models.repository.*;
+import handlers.ResumeHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import play.libs.Json;
 import play.libs.concurrent.HttpExecutionContext;
 import play.mvc.Controller;
+import play.mvc.Http;
 import play.mvc.Result;
 
 import javax.inject.Inject;
 import java.util.concurrent.CompletionStage;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static play.libs.Json.toJson;
 
+//TODO: Do proper exception handling using a class
+//TODO: Add one validation method before forwarding the request to handler.
 public class ResumeController extends Controller {
 
     final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    private final PersonRepository personRepository;
-    private final ContactRepository contactRepository;
-    private final SkillRepository skillRepository;
-    private final EducationRepository educationRepository;
-    private final WorkRepository workRepository;
-    private final AdditionalInformationRepository additionalInformationRepository;
-
+    private final ResumeHandler handler;
 
     private final HttpExecutionContext ec;
 
     @Inject
-    public ResumeController(PersonRepository personRepository, ContactRepository contactRepository,
-                            SkillRepository skillRepository, EducationRepository educationRepository,
-                            WorkRepository workRepository, AdditionalInformationRepository additionalInformationRepository,
-                            HttpExecutionContext ec) {
-        this.personRepository = personRepository;
-        this.contactRepository = contactRepository;
-        this.skillRepository = skillRepository;
-        this.educationRepository = educationRepository;
-        this.workRepository = workRepository;
-        this.additionalInformationRepository = additionalInformationRepository;
+    public ResumeController(ResumeHandler handler, HttpExecutionContext ec) {
+        this.handler = handler;
         this.ec = ec;
     }
 
     public CompletionStage<Result>  getPerson(Long personId) {
-        CompletionStage<Person> person = personRepository.getPerson(personId);
-        CompletionStage<Contact> contact = contactRepository.getContact(personId);
-        CompletionStage<Stream<Skill>> streamSkills = skillRepository.getSkills(personId);
-        CompletionStage<Stream<Education>> streamEducation = educationRepository.getEducation(personId);
-        CompletionStage<Stream<Work>> streamWork = workRepository.getWorks(personId);
-        CompletionStage<Stream<AdditionalInformation>> streamAdditionalInfo = additionalInformationRepository.getAdditionalInformations(personId);
-
-        ResumeDTO resumeDTO = new ResumeDTO();
-        return person.thenAccept(resumeDTO::setBasic).thenRunAsync(() -> contact.thenAccept(resumeDTO::setContact)).
-                thenRunAsync(()->streamSkills.thenAccept(s-> resumeDTO.setSkills(s.collect(Collectors.toList())))).
-                thenRunAsync(()->streamEducation.thenAccept(s-> resumeDTO.setEducation(s.collect(Collectors.toList())))).
-                thenRunAsync(()->streamWork.thenAccept(s-> resumeDTO.setWorks(s.collect(Collectors.toList())))).
-                thenRunAsync(()->streamAdditionalInfo.thenAccept(s-> resumeDTO.setAdditionalInfo(s.collect(Collectors.toList())))).
-                thenApplyAsync(s-> ok(toJson(resumeDTO)));
+        long start = System.currentTimeMillis();
+        CompletionStage<ResumeDTO> resumeDTO = handler.getResumeData(personId);
+        logger.info("resume data fetched successfully:" + toJson(resumeDTO));
+        CompletionStage<Result> resultCompletionStage =  resumeDTO.thenApply(s -> ok(toJson(resumeDTO)));
+        logger.error("Time taken to complete the fetch:{} ms", System.currentTimeMillis() - start);
+        return resultCompletionStage;
     }
 
-//    public CompletionStage<Result> getContact() {
-//        return contactRepository
-//                .getContact(personRepository
-//                        .list().thenApplyAsync(p->))
-//                .thenApplyAsync(personStream -> ok(toJson(personStream.collect(Collectors.toList()))), ec.current());
-//    }
+    public CompletionStage<Result>  addPerson(Http.Request request) {
+        JsonNode json = request.body().asJson();
+        logger.warn("request received to create resume:" + json);
+        final ResumeDTO resumeDTO = Json.fromJson(json.get("result"), ResumeDTO.class);
+        logger.warn("restored DTO object:" + resumeDTO.getBasic());
+        CompletionStage<ResumeDTO> resumeDTOCompletionStage = handler.createResume(resumeDTO);
+        return resumeDTOCompletionStage.thenApplyAsync(s->ok(toJson("\"status\":\"success\"")));
+    }
 }

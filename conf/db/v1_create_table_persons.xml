@@ -29,7 +29,7 @@
                 <constraints nullable="false"/>
             </column>
             <column name="contact_id" type="bigint">
-                <constraints nullable="false"/>
+                <constraints nullable="true"/>
             </column>
             <column name="created_at" type="datetime">
                 <constraints nullable="false"/>
