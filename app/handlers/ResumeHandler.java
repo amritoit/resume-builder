@@ -98,9 +98,12 @@ public class ResumeHandler {
         CompletionStage<Stream<AdditionalInformation>> addInfoCompletionStage = resumeDTOCompletionStage.thenComposeAsync(lResumeDTO ->
                 additionalInformationRepository.addAdditionalInformation(lResumeDTO.getAdditionalInfo()));
 
-        return contactCompletionStage.thenCombine(skillCompletionStage.thenApply(s -> s),
-                (contact, skills) -> resumeDTO).thenCombine(eduCompletionStage.thenApply(s -> s), (r, e) -> resumeDTO).
+        return contactCompletionStage.thenCombine(skillCompletionStage.thenApply(s -> s), (contact, skills) -> {
+            resumeDTO.getBasic().setContactId(contact.getId());
+            return resumeDTO;
+        }).thenCombine(eduCompletionStage.thenApply(s -> s), (r, e) -> resumeDTO).
                 thenCombine(workCompletionStage.thenApply(s -> s), (w, r) -> resumeDTO).
-                thenCombineAsync(addInfoCompletionStage.thenApply(s -> s), (c, s) -> resumeDTO);
+                thenCombineAsync(addInfoCompletionStage.thenApply(s -> s), (c, s) -> resumeDTO).
+                thenApply(r->personRepository.merge(resumeDTO.getBasic())).thenApply(s->resumeDTO);
     }
 }

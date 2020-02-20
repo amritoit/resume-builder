@@ -31,6 +31,11 @@ public class PersonRepositoryImpl implements PersonRepository {
     }
 
     @Override
+    public CompletionStage<Person> merge(Person person) {
+        return supplyAsync(() -> wrap(em -> mergePerson(em, person)), executionContext);
+    }
+
+    @Override
     public CompletionStage<Person> getPerson(Long personId) {
         return supplyAsync(() -> wrap(em -> getPerson(em, personId)), executionContext);
     }
@@ -40,8 +45,12 @@ public class PersonRepositoryImpl implements PersonRepository {
     }
 
     private Person insert(EntityManager em, Person person) {
-        System.out.println("person:"+toJson(person));
         em.persist(person);
+        return person;
+    }
+
+    private Person mergePerson(EntityManager em, Person person) {
+        em.merge(person);
         return person;
     }
 

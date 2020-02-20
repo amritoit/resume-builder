@@ -39,8 +39,6 @@ public class ContactRepositoryImpl implements ContactRepository{
 
     private Contact insertContact(EntityManager em, Contact contact) {
         em.persist(contact);
-        em.refresh(contact);
-        System.out.println("contact:"+toJson(contact));
         return contact;
     }
 
