@@ -40,28 +40,30 @@ public class ResumeHandler {
     }
 
     public CompletionStage<ResumeDTO> getResumeData(Long personId) {
+
         CompletionStage<Person> person = personRepository.getPerson(personId);
         CompletionStage<Contact> contact = contactRepository.getContact(personId);
         CompletionStage<Stream<Skill>> streamSkills = skillRepository.getSkills(personId);
         CompletionStage<Stream<Education>> streamEducation = educationRepository.getEducation(personId);
         CompletionStage<Stream<Workinfo>> streamWork = workRepository.getWorks(personId);
-        CompletionStage<Stream<AdditionalInformation>> streamAdditionalInfo = additionalInformationRepository.getAdditionalInformations(personId);
+        CompletionStage<Stream<AdditionalInformation>> streamAdditionalInfo = additionalInformationRepository.
+                getAdditionalInformations(personId);
         ResumeDTO resumeDTO = new ResumeDTO();
 
         return person.thenCombineAsync(contact, (p, c) -> {
             resumeDTO.setBasic(p);
             resumeDTO.setContact(c);
             return resumeDTO;
-        }).thenCombineAsync(streamSkills.thenApply(s->s), (lResumeDTO, skills)->{
+        }).thenCombineAsync(streamSkills.thenApply(s -> s), (lResumeDTO, skills) -> {
             lResumeDTO.setSkills(skills.collect(Collectors.toList()));
             return lResumeDTO;
-        }).thenCombineAsync(streamEducation.thenApply(s->s), (lResumeDTO, educations)->{
+        }).thenCombineAsync(streamEducation.thenApply(s -> s), (lResumeDTO, educations) -> {
             lResumeDTO.setEducation(educations.collect(Collectors.toList()));
             return lResumeDTO;
-        }).thenCombineAsync(streamWork.thenApply(s->s), (lResumeDTO, works)->{
+        }).thenCombineAsync(streamWork.thenApply(s -> s), (lResumeDTO, works) -> {
             lResumeDTO.setWorkinfos(works.collect(Collectors.toList()));
             return lResumeDTO;
-        }).thenCombineAsync(streamAdditionalInfo.thenApply(s->s), (lResumeDTO, additionalInformation)->{
+        }).thenCombineAsync(streamAdditionalInfo.thenApply(s -> s), (lResumeDTO, additionalInformation) -> {
             lResumeDTO.setAdditionalInfo(additionalInformation.collect(Collectors.toList()));
             return lResumeDTO;
         });
@@ -71,7 +73,7 @@ public class ResumeHandler {
     public CompletionStage<ResumeDTO> createResume(ResumeDTO resumeDTO) {
 
         CompletionStage<Person> personCompletionStage = personRepository.add(resumeDTO.getBasic());
-        CompletionStage<ResumeDTO> resumeDTOCompletionStage =  personCompletionStage.thenApply(person -> {
+        CompletionStage<ResumeDTO> resumeDTOCompletionStage = personCompletionStage.thenApply(person -> {
             resumeDTO.getContact().setPersonId(person.getId());
             resumeDTO.getContact().getSocialLinks().forEach(s -> s.setPersonId(person.getId()));
             resumeDTO.getSkills().forEach(s -> s.setPersonId(person.getId()));
@@ -84,27 +86,21 @@ public class ResumeHandler {
             lResumeDTO.getContact().getSocialLinks().forEach(s -> s.setContact(lResumeDTO.getContact()));
             return contactRepository.addContact(lResumeDTO.getContact());
         });
+        CompletionStage<Stream<Skill>> skillCompletionStage = resumeDTOCompletionStage.thenComposeAsync(lResumeDTO ->
+                skillRepository.addSkill(lResumeDTO.getSkills()));
+        CompletionStage<Stream<Education>> eduCompletionStage = resumeDTOCompletionStage.thenComposeAsync(lResumeDTO ->
+                educationRepository.addEducation(lResumeDTO.getEducation()));
+        CompletionStage<Stream<Workinfo>> workCompletionStage = resumeDTOCompletionStage.thenComposeAsync(lResumeDTO -> {
+            lResumeDTO.getWorkinfos().forEach(w-> w.getWorkRoleDescriptions().forEach(d->d.setPersonId(w.getPersonId())));
+            lResumeDTO.getWorkinfos().forEach(w-> w.getWorkRoleDescriptions().forEach(d->d.setWorkinfo(w)));
+            return workRepository.addWork(lResumeDTO.getWorkinfos());
+        });
+        CompletionStage<Stream<AdditionalInformation>> addInfoCompletionStage = resumeDTOCompletionStage.thenComposeAsync(lResumeDTO ->
+                additionalInformationRepository.addAdditionalInformation(lResumeDTO.getAdditionalInfo()));
 
-        CompletionStage<Stream<Skill>> skillCompletionStage = resumeDTOCompletionStage.thenComposeAsync(
-                lResumeDTO -> skillRepository.addSkill(lResumeDTO.getSkills()));
-
-        CompletionStage<Stream<Education>> eduCompletionStage = resumeDTOCompletionStage.thenComposeAsync(
-                lResumeDTO -> educationRepository.addEducation(lResumeDTO.getEducation()));
-
-        CompletionStage<Stream<Workinfo>> workCompletionStage = resumeDTOCompletionStage.thenComposeAsync(
-                lResumeDTO -> workRepository.addWork(lResumeDTO.getWorkinfos()));
-
-        CompletionStage<Stream<AdditionalInformation>> addInfoCompletionStage = resumeDTOCompletionStage.thenComposeAsync(
-                lResumeDTO -> additionalInformationRepository.addAdditionalInformation(lResumeDTO.getAdditionalInfo()));
-
-        CompletionStage<ResumeDTO> contactSkill = contactCompletionStage.thenCombine(skillCompletionStage.thenApply(s->s),
-                (contact, skills)-> resumeDTO);
-
-        CompletionStage<ResumeDTO> educationWork = eduCompletionStage.thenCombine(workCompletionStage.thenApply(s->s),
-                (contact, skills)-> resumeDTO);
-
-        CompletionStage<ResumeDTO> contactSkillEducationWork = contactSkill.thenCombineAsync(educationWork.thenApply(s->s),(c,s)->s);
-
-        return contactSkillEducationWork.thenCombineAsync(addInfoCompletionStage.thenApply(s->s), (c,s)->c);
+        return contactCompletionStage.thenCombine(skillCompletionStage.thenApply(s -> s),
+                (contact, skills) -> resumeDTO).thenCombine(eduCompletionStage.thenApply(s -> s), (r, e) -> resumeDTO).
+                thenCombine(workCompletionStage.thenApply(s -> s), (w, r) -> resumeDTO).
+                thenCombineAsync(addInfoCompletionStage.thenApply(s -> s), (c, s) -> resumeDTO);
     }
 }
